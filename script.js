@@ -4,6 +4,9 @@ const formSection = document.createElement('section');
 const input = document.createElement('input');
 const button = document.createElement('button');
 
+const inputDate = document.createElement('input');
+inputDate.type = 'date'; 
+inputDate.className = 'my-input'
 
 
 // фавикон
@@ -33,7 +36,7 @@ formSection.className = 'form-section';
 button.className = 'btn-add';
 
 // Сборка
-formSection.append(input, button);
+formSection.append(input, inputDate, button);
 main.append(title, formSection);
 document.body.append(main); 
 
@@ -64,8 +67,55 @@ function renderTasks() {
         li.style.borderBottom = '1px solid #ccc';
         li.style.marginTop = '10px';
 
+        const infoContainer = document.createElement('div')
+
         const span = document.createElement('span');
         span.textContent = task.text;
+
+        //  дата
+        const dateSpan = document.createElement('span');
+        if (task.date) {
+            dateSpan.textContent = ` (до ${task.date})`;
+            dateSpan.style.color = 'gray';
+            dateSpan.style.fontSize = '0.9em';
+        }
+        
+        infoContainer.append(span, dateSpan);
+
+        const btnContainer = document.createElement('div')
+
+        // кнопка редактирования
+        const editBtn = document.createElement('button');
+        editBtn.textContent = 'edit';
+        editBtn.className = 'btn-edit';
+
+
+        editBtn.addEventListener('click', () => {
+            li.textContent = ''; 
+            
+            const editText = document.createElement('input');
+            editText.type = 'text';
+            editText.value = task.text;
+            editText.style.marginRight = '5px';
+
+            const editDate = document.createElement('input');
+            editDate.type = 'date';
+            editDate.value = task.date || '';
+            editDate.style.marginRight = '5px';
+
+            const saveBtn = document.createElement('button');
+            saveBtn.textContent = 'save';
+            saveBtn.className = 'btn-save';
+
+            saveBtn.addEventListener('click', () => {
+                task.text = editText.value.trim() || task.text; 
+                task.date = editDate.value;
+                renderTasks(); 
+            });
+
+            li.append(editText, editDate, saveBtn);
+        });
+
 
         // кнопка удаления
         const deleteBtn = document.createElement('button');
@@ -77,23 +127,30 @@ function renderTasks() {
             renderTasks();
         });
 
-        li.append(span, deleteBtn);
+
+
+        btnContainer.append(editBtn, deleteBtn);
+        li.append(infoContainer, btnContainer);
         taskList.append(li);
     });
 }
 
 function addTask() {
     const text = input.value.trim();
+    const date = inputDate.value;
+
     if (!text) return; 
 
     const newTask = {
         id: Date.now(), 
-        text: text
+        text: text,
+        date: date
     };
 
     tasks.push(newTask); 
     input.value = '';    
-    
+    inputDate.value = '';
+
     renderTasks();      
 }
 
