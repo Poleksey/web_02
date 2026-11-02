@@ -21,7 +21,7 @@ input.placeholder = 'Введите текст...';
 button.type = 'button';
 
 
-title.style.color = 'blue';      
+title.style.color = 'red';      
 title.style.textAlign = 'center';
 input.className = 'my-input';    
 
@@ -36,3 +36,46 @@ button.className = 'btn-add';
 formSection.append(input, button);
 main.append(title, formSection);
 document.body.append(main); 
+
+
+
+
+// Бизнес-логика
+
+// добавление задачи
+const taskList = document.createElement('ul');
+taskList.className = 'task-list';
+taskList.style.listStyleType = 'none'; 
+taskList.style.padding = '0';
+main.append(taskList); 
+
+let tasks = [];
+
+function renderTasks() {
+    taskList.textContent = ''; 
+
+    tasks.forEach(task => {
+        const li = document.createElement('li');
+        li.className = 'task-item';
+        li.textContent = task.text;
+
+        taskList.append(li);
+    });
+}
+
+function addTask() {
+    const text = input.value.trim();
+    if (!text) return; 
+
+    const newTask = {
+        id: Date.now(), 
+        text: text
+    };
+
+    tasks.push(newTask); 
+    input.value = '';    
+    
+    renderTasks();      
+}
+
+button.addEventListener('click', addTask);
