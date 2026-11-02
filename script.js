@@ -82,6 +82,26 @@ function renderTasks() {
         
         infoContainer.append(span, dateSpan);
 
+        infoContainer.style.display = 'flex';
+        infoContainer.style.alignItems = 'center';
+        infoContainer.style.gap = '10px';
+
+        // выполнено\невыеполнено
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = task.completed; 
+        
+        if (task.completed) {
+            infoContainer.classList.add('completed');
+        }
+
+        checkbox.addEventListener('change', () => {
+            task.completed = checkbox.checked;
+            renderTasks(); 
+        });
+
+        infoContainer.append(checkbox, span, dateSpan);
+
         const btnContainer = document.createElement('div')
 
         // кнопка редактирования
@@ -144,7 +164,8 @@ function addTask() {
     const newTask = {
         id: Date.now(), 
         text: text,
-        date: date
+        date: date,
+        completed: false
     };
 
     tasks.push(newTask); 
