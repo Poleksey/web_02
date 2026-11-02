@@ -57,8 +57,27 @@ function renderTasks() {
     tasks.forEach(task => {
         const li = document.createElement('li');
         li.className = 'task-item';
-        li.textContent = task.text;
+        
+        li.style.display = 'flex';
+        li.style.justifyContent = 'space-between';
+        li.style.padding = '10px';
+        li.style.borderBottom = '1px solid #ccc';
+        li.style.marginTop = '10px';
 
+        const span = document.createElement('span');
+        span.textContent = task.text;
+
+        // кнопка удаления
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'del';
+        deleteBtn.className = 'btn-delete';
+        
+        deleteBtn.addEventListener('click', () => {
+            tasks = tasks.filter(t => t.id !== task.id);
+            renderTasks();
+        });
+
+        li.append(span, deleteBtn);
         taskList.append(li);
     });
 }
