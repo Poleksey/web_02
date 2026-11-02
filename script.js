@@ -115,6 +115,20 @@ main.append(controlsSection);
 
 let tasks = [];
 
+// Сохранение задач в память браузера
+function saveTasks() {
+    localStorage.setItem('todoTasks', JSON.stringify(tasks));
+}
+
+// Загрузка задач из памяти браузера
+function loadTasks() {
+    const saved = localStorage.getItem('todoTasks');
+    if (saved) {
+        tasks = JSON.parse(saved);
+    }
+}
+
+
 function renderTasks() {
     taskList.textContent = ''; 
 
@@ -237,6 +251,8 @@ function renderTasks() {
         li.append(infoContainer, btnContainer);
         taskList.append(li);
     });
+    
+    saveTasks();
 }
 
 function addTask() {
@@ -260,6 +276,8 @@ function addTask() {
 }
 
 button.addEventListener('click', addTask);
+loadTasks(); 
+renderTasks();
 searchInput.addEventListener('input', renderTasks);
 filterSelect.addEventListener('change', renderTasks);
 sortSelect.addEventListener('change', renderTasks);
