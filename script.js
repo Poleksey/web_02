@@ -52,12 +52,96 @@ taskList.style.listStyleType = 'none';
 taskList.style.padding = '0';
 main.append(taskList); 
 
+// Панель управления: поиск и фильтры
+const controlsSection = document.createElement('section');
+controlsSection.className = 'controls-section';
+controlsSection.style.display = 'flex';
+controlsSection.style.gap = '10px';
+controlsSection.style.marginTop = '20px';
+
+// Поиск
+const searchInput = document.createElement('input');
+searchInput.type = 'search';
+searchInput.placeholder = 'Поиск по названию...';
+searchInput.className = 'my-input';
+
+// Фильтр по статусу
+const filterSelect = document.createElement('select');
+filterSelect.className = 'sort-select';
+filterSelect.style.padding = '10px';
+filterSelect.style.border = '1px solid #ccc';
+filterSelect.style.borderRadius = '4px';
+
+const optAll = document.createElement('option');
+optAll.value = 'all';
+optAll.textContent = 'Все задачи';
+
+const optActive = document.createElement('option');
+optActive.value = 'active';
+optActive.textContent = 'В процессе';
+
+const optCompleted = document.createElement('option');
+optCompleted.value = 'completed';
+optCompleted.textContent = 'Выполненные';
+
+filterSelect.append(optAll, optActive, optCompleted);
+
+
+// select для сортировки
+const sortSelect = document.createElement('select');
+sortSelect.className = 'sort-select';
+sortSelect.style.padding = '10px';
+sortSelect.style.border = '1px solid #ccc';
+sortSelect.style.borderRadius = '4px';
+
+const optNone = document.createElement('option');
+optNone.value = 'none';
+optNone.textContent = 'Без сортировки';
+
+const optAsc = document.createElement('option');
+optAsc.value = 'date-asc';
+optAsc.textContent = 'Сначала старые';
+
+const optDesc = document.createElement('option');
+optDesc.value = 'date-desc';
+optDesc.textContent = 'Сначала новые';
+
+sortSelect.append(optNone, optAsc, optDesc);
+
+
+controlsSection.append(searchInput, filterSelect, sortSelect); 
+main.append(controlsSection);
+
+
 let tasks = [];
 
 function renderTasks() {
     taskList.textContent = ''; 
 
-    tasks.forEach(task => {
+    let displayTasks = [...tasks];
+
+    // сортировка
+    if (sortSelect.value === 'date-asc') {
+        displayTasks.sort((a, b) => new Date(a.date) - new Date(b.date));
+    } else if (sortSelect.value === 'date-desc') {
+        displayTasks.sort((a, b) => new Date(b.date) - new Date(a.date));
+    }
+
+    // фильтрация
+    const filterValue = filterSelect.value;
+    if (filterValue === 'active') {
+        displayTasks = displayTasks.filter(t => !t.completed);
+    } else if (filterValue === 'completed') {
+        displayTasks = displayTasks.filter(t => t.completed);
+    }
+
+    // поиск
+    const searchValue = searchInput.value.toLowerCase().trim();
+    if (searchValue) {
+        displayTasks = displayTasks.filter(t => t.text.toLowerCase().includes(searchValue));
+    }
+
+    displayTasks.forEach(task =>  {
         const li = document.createElement('li');
         li.className = 'task-item';
         
@@ -176,3 +260,6 @@ function addTask() {
 }
 
 button.addEventListener('click', addTask);
+searchInput.addEventListener('input', renderTasks);
+filterSelect.addEventListener('change', renderTasks);
+sortSelect.addEventListener('change', renderTasks);
