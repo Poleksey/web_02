@@ -17,3 +17,9 @@ button.type = 'button';
 title.style.color = 'blue';      
 title.style.textAlign = 'center';
 input.className = 'my-input';    
+
+
+// Сборка
+formSection.append(input, button);
+main.append(title, formSection);
+document.body.append(main); 
