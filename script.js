@@ -158,6 +158,8 @@ function renderTasks() {
     displayTasks.forEach(task =>  {
         const li = document.createElement('li');
         li.className = 'task-item';
+        li.draggable = true;
+        li.dataset.id = task.id;
         
         li.style.display = 'flex';
         li.style.justifyContent = 'space-between';
@@ -178,8 +180,6 @@ function renderTasks() {
             dateSpan.style.fontSize = '0.9em';
         }
         
-        infoContainer.append(span, dateSpan);
-
         infoContainer.style.display = 'flex';
         infoContainer.style.alignItems = 'center';
         infoContainer.style.gap = '10px';
@@ -281,3 +281,42 @@ renderTasks();
 searchInput.addEventListener('input', renderTasks);
 filterSelect.addEventListener('change', renderTasks);
 sortSelect.addEventListener('change', renderTasks);
+
+
+// drag and drop
+let draggedId = null;
+
+taskList.addEventListener('dragstart', (e) => {
+    const li = e.target.closest('.task-item');
+    if (li) {
+        draggedId = Number(li.dataset.id);
+        li.style.opacity = '0.5'; 
+    }
+});
+
+taskList.addEventListener('dragend', (e) => {
+    const li = e.target.closest('.task-item');
+    if (li) li.style.opacity = '1'; 
+});
+
+taskList.addEventListener('dragover', (e) => {
+    e.preventDefault(); 
+});
+
+taskList.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const targetLi = e.target.closest('.task-item');
+    if (!targetLi || draggedId === null) return;
+
+    const targetId = Number(targetLi.dataset.id);
+    if (draggedId === targetId) return; 
+
+    const fromIndex = tasks.findIndex(t => t.id === draggedId);
+    const toIndex = tasks.findIndex(t => t.id === targetId);
+
+    const [movedTask] = tasks.splice(fromIndex, 1);
+    tasks.splice(toIndex, 0, movedTask);
+
+    saveTasks(); 
+    renderTasks(); 
+});
