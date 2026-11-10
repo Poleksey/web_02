@@ -9,12 +9,6 @@ inputDate.type = 'date';
 inputDate.className = 'my-input'
 
 
-// фавикон
-const favicon = document.createElement('link');
-favicon.rel = 'icon';
-favicon.href = 'data:,'; // Пустая иконка
-document.head.append(favicon);
-
 title.textContent = 'список задач';
 button.textContent = 'Добавить';
 
